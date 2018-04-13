@@ -1,0 +1,12 @@
+open powershell
+type cd C:\Users\propa\Desktop\todolist2018
+then ppress enter and type 'gulp watch'
+
+
+/////////////////////////////////////
+add to git hub
+
+git status
+git add .
+git commint -m" your message"
+git tag -a versionxxx.xx -m"your message here"
