@@ -10,3 +10,6 @@ git status
 git add .
 git commint -m" your message"
 git tag -a versionxxx.xx -m"your message here"
+git push origin master --follow-tag
+
+git checkout -b name or branch 
