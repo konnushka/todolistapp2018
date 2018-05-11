@@ -1,5 +1,6 @@
 //import the javascript file
-
+impot * as moment from 'moment';
+import {Template} from '../ts/template';
 import{Task} from '../ts/task';
 import{TaskManager} from '../ts/TaskManager';
 import {ListView} from '../ts/ListView'
