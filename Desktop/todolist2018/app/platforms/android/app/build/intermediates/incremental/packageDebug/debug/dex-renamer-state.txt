@@ -1,0 +1,4 @@
+#Fri Apr 27 16:59:23 AEST 2018
+base.0=C\:\\Users\\propa\\Desktop\\todolist2018\\app\\platforms\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+renamed.0=classes.dex
+file.0=C\:\\Users\\propa\\Desktop\\todolist2018\\app\\platforms\\android\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0\\classes.dex

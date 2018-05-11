@@ -13,3 +13,7 @@ git tag -a versionxxx.xx -m"your message here"
 git push origin master --follow-tag
 
 git checkout -b name or branch 
+
+
+
+//cordova 

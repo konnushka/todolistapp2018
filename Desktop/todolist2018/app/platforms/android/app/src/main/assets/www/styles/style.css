@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: bisque; }
+
+header {
+  display: flex;
+  flex-direction: row; }
+  header .logo {
+    max-width: 60px; }
+  header h1 {
+    margin: 0;
+    padding: 5px; }
+
+#task-form {
+  display: flex;
+  flex-direction: row; }
+  #task-form input {
+    flex: 1; }
+  #task-form button {
+    max-width: 100px; }

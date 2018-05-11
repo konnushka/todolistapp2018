@@ -1,72 +1,10 @@
-class Task{
+//import the javascript file
 
-    id:string;
-    name:string;
-    status:boolean;
-constructor(taskname:string){
-    this.id = new Date().getTime().toString();
-    this.name = taskname;
-    this.status = false;
-    }
-}
-class TaskManager{
-  tasks : Array<Task>
-  constructor(array : Array<Task>){
-    this.tasks = array;
-  }
-  add(task:Task){
-    this.tasks.push(task);
-    //console.log(this.tasks);
-  }
+import{Task} from '../ts/task';
+import{TaskManager} from '../ts/TaskManager';
+import {ListView} from '../ts/ListView'
+import {DataStorage} from '../ts/DataStorage'
 
-}
-class ListView{
-list:HTMLElement;
-constructor(listid:string){
-  this.list = document.getElementById(listid);
-}
-render(items:Array<Task>){
-items.forEach((task)=> {
-  let id = task.id;
-  let name = task.name;
-  let status = task.status;
-  let template = `<li id="${id}" data-status="${status}">
-                  <div class="task-container">
-                    <div class="task-name">${name}</div>
-                    <div class="task-buttons">
-                      <button type="button" data-function="status">&#x2714;</button>
-                      <button type="button" data-function="delete">&times;</button>
-                    </div>
-                  </div>
-                  </li>`;
-  let fragment = document.createRange().createContextualFragment( template );
-  this.list.appendChild( fragment );
-});
-
-}
-clear(){
-  this.list.innerHTML ='';
-}
-}
-class DataStorage{
-storage:any;
-constructor(){
-  this.storage = window.localStorage;
-}
-///store create a json string from our Array
-store(array:Array <Task>){
-let data = JSON.stringify( array );
-this.storage.setItem('taskdata',data);
-}
-//get item from storage
-read(){
-let data = this.storage.getItem('taskdata');
-let array = JSON.parse( data );
-return array;
-// console.log(tarray);
-}
-
-}
 //initialize
 var taskarray = [];
 var taskstorage = new DataStorage();
@@ -74,11 +12,18 @@ var taskmanager = new TaskManager(taskarray);
 var listview = new ListView('task-list');
 
 window.addEventListener('load',()=>{
-  let taskdata = taskstorage.read();
-  console.log(taskdata);
-  taskdata.forEach((item)=>{taskarray.push(item);});
-  console.log(taskarray);
-  listview.render(taskarray);
+  let taskdata = taskstorage.read((data)=>{
+    //check for Data
+    if(data.length > 0){
+      data.forEach ((item) => {
+        taskarray.push(item);
+      });
+      listview.clear();
+      listview.render(taskarray);
+    }
+    });
+  //taskdata.forEach((item)=>{taskarray.push(item);});
+  //listview.render(taskarray);
 });
 //reference to form
 const taskform = (<HTMLFormElement> document.getElementById('task-form'));//cast it as an html form
@@ -88,10 +33,83 @@ const taskform = (<HTMLFormElement> document.getElementById('task-form'));//cast
         let taskname=(<HTMLInputElement>input).value;
         taskform.reset();
         //console.log(taskname);
+        if (taskname.length > 0){
+
         let task = new Task (taskname);
         //TaskManager.add(task);
         taskmanager.add(task);
         listview.clear();
-        taskstorage.store( taskarray );//store the data
-        listview.render( taskarray );
+        taskstorage.store( taskarray ,(result) => {
+            if(result){
+              taskform.reset();
+              listview.clear();
+              listview.render(taskarray);
+            }
+            else{
+              //error handler
+            }
+
+
+        });//store the data
+      //  listview.render( taskarray );
+      }
+      else{
+
+          //does nothing blank tasks are  not added
+
+      }
+    });
+
+
+
+
+
+
+//get the id of the getElementById
+function getParentID(elm:Node){
+
+  while (elm.parentNode){
+    elm.elm.parentNode;
+    let id:string = (<HTMLElement> elm).getAttribute('id');
+    //if id found
+          if(id){
+          return id;
+        }
+  }
+  return null;//if id is not found
+}
+    //add new listener for list
+    const listelement:HTMLElement = document.getElementById('task-list');
+    listelement.addEventListener('click',(event:Event)=> {
+      let target:HTMLElement = <HTMLElement> event.target;
+      let id = getParentID(<Node> event.target); //node means html in the conttent of the document
+        //check which button was click
+    if(target.getAttribute('data-function')=='status'){
+          //check if id exist
+          if(id){
+          taskmanager.changeStatus(id, () => {
+            taskstorage.store(taskarray,()=>{
+              listview.clear();
+              listview.render(taskarray);
+
+            });
+            //listview.clear();
+            //listview.render(taskarray);
+            } );
+          }
+      }
+    //try to delete the tasks
+      if(target.getAttribute('data-function')=='delete'){
+        if( id ){
+          taskmanager.delete(id,() => {
+
+            taskstorage.store(taskarray,()=>{
+              listview.clear();
+              listview.render(taskarray);
+
+            });
+          });
+
+        }
+      }
     });

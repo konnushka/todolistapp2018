@@ -1,4 +1,4 @@
-class Task{
+export class Task{//export is to make public
 
     id:string;
     name:string;
