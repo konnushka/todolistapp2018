@@ -24,7 +24,16 @@ render(items:Array<Task>){
 });
 
 }
+show(id){
+
+
+
+}
+
+
+
 clear(){
   this.list.innerHTML ='';
 }
+
 }
