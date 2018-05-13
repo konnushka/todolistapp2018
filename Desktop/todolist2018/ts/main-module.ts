@@ -1,16 +1,34 @@
 //import the javascript file
-impot * as moment from 'moment';
+import * as moment from 'moment';
 import {Template} from '../ts/template';
+import {TemplateDone} from '../ts/TemplateDone';
 import{Task} from '../ts/task';
 import{TaskManager} from '../ts/TaskManager';
-import {ListView} from '../ts/ListView'
-import {DataStorage} from '../ts/DataStorage'
+import {ListView} from '../ts/ListView';
+import {DataStorage} from '../ts/DataStorage';
+
 
 //initialize
-var taskarray = [];
-var taskstorage = new DataStorage();
+var taskarray : Array<Task>=[];
+var taskstorage = new DataStorage('taskdata');
 var taskmanager = new TaskManager(taskarray);
 var listview = new ListView('task-list');
+var donelistview = new ListView('task-list-done');
+export var tasktemplate = new Template();
+export var donetasktemplate = new TemplateDone();
+
+//get the id of the getElementById
+function getParentID(elm:Node){
+  while (elm.parentNode){
+    elm=elm.parentNode;
+    let id:string = (<HTMLElement> elm).getAttribute('id');
+    //if id found
+          if(id){
+          return id;
+        }
+  }
+  return null;//if id is not found
+}
 
 window.addEventListener('load',()=>{
   let taskdata = taskstorage.read((data)=>{
@@ -21,6 +39,7 @@ window.addEventListener('load',()=>{
       });
       listview.clear();
       listview.render(taskarray);
+
     }
     });
   //taskdata.forEach((item)=>{taskarray.push(item);});
@@ -61,24 +80,6 @@ const taskform = (<HTMLFormElement> document.getElementById('task-form'));//cast
       }
     });
 
-
-
-
-
-
-//get the id of the getElementById
-function getParentID(elm:Node){
-
-  while (elm.parentNode){
-    elm.elm.parentNode;
-    let id:string = (<HTMLElement> elm).getAttribute('id');
-    //if id found
-          if(id){
-          return id;
-        }
-  }
-  return null;//if id is not found
-}
     //add new listener for list
     const listelement:HTMLElement = document.getElementById('task-list');
     listelement.addEventListener('click',(event:Event)=> {
@@ -101,12 +102,23 @@ function getParentID(elm:Node){
       }
     //try to delete the tasks
       if(target.getAttribute('data-function')=='delete'){
-        if( id ){
-          taskmanager.delete(id,() => {
 
+        if( id ){
+          taskmanager.completed(id,() =>{
+            taskstorage.store(taskarray,()=>{
+              donelistview.clear();
+              donelistview.render(taskarray);
+              //add the new list call here
+
+            });
+
+          });
+
+          taskmanager.remove(id,() => {
             taskstorage.store(taskarray,()=>{
               listview.clear();
               listview.render(taskarray);
+              //add the new list call here
 
             });
           });

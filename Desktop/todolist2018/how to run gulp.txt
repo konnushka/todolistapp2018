@@ -16,4 +16,4 @@ git checkout -b name or branch
 
 
 
-//cordova 
+//cogot rdova 

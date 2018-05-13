@@ -1,26 +1,43 @@
-import{Task} from '../ts/task';
-export class DataStorage{
-        storage:any;
-        constructor(){
-          this.storage = window.localStorage;
-        }
-///store create a json string from our Array
-store(array:Array <Task>, callback){
-      let data = JSON.stringify( array );
-      let storestatus = this.storage.setItem('taskdata',data);
+import { Task } from '../ts/task';
 
-        if (storestatus){
-          callback(true);
-        }
-        else{
-          callback(false);
-        }
+export class DataStorage{
+  status:boolean;
+  dataname:string;
+  constructor( dataname:string ){
+    //check if local storage available
+    if( window.localStorage ){
+    //local storage  available
+      this.status = true;
+      this.dataname = dataname;
+    }
+    else{
+    //local storage not available
+      this.status = false;
+    }
+  }
+  read( callback ){
+    if( this.status ){
+      try{
+        let data:string = window.localStorage.getItem(this.dataname);
+        callback( JSON.parse( data ) );
       }
-//get item from storage
-read(callback){
-      let data = this.storage.getItem('taskdata');
-      let array = JSON.parse( data );
-      callback(array);
-      // console.log(tarray);
+      catch( error ){
+        //console.log(error)
+        callback (false);
       }
     }
+  }
+  store( tasks:Array <Task>, callback ){
+    if( this.status ){
+      try{
+        let data:string = JSON.stringify( tasks );
+        window.localStorage.setItem(this.dataname, data );
+        callback( true );
+      }
+      catch( error ){
+        //console.log(error)
+        callback( false );
+      }
+    }
+  }
+}
